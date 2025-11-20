@@ -1,0 +1,37 @@
+name: "PR Title Prefix"
+
+on:
+  pull_request:
+    types: [opened, reopened]
+
+permissions:
+  pull-requests: write
+
+jobs:
+  update_title:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: PR 제목에 티켓 번호(브랜치명) 자동 추가
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          # 브랜치 이름을 그대로 가져옵니다 (예: JIRA-123)
+          BRANCH_NAME=${{ github.head_ref }}
+          
+          # 브랜치 이름이 티켓 번호 형식(대문자-숫자)인지 확인
+          if [[ $BRANCH_NAME =~ ^[A-Z]+-[0-9]+$ ]]; then
+            ISSUE_ID=$BRANCH_NAME
+            CURRENT_TITLE="${{ github.event.pull_request.title }}"
+          
+            # 제목이 이미 "[티켓번호]"로 시작하지 않는 경우에만 수정
+            if [[ "$CURRENT_TITLE" != "[$ISSUE_ID]"* ]]; then
+              NEW_TITLE="[$ISSUE_ID] $CURRENT_TITLE"
+              gh pr edit ${{ github.event.pull_request.number }} --title "$NEW_TITLE"
+              echo "PR 제목을 변경했습니다: $NEW_TITLE"
+            else
+              echo "PR 제목에 이미 티켓 번호가 적용되어 있습니다."
+            fi
+          else
+            echo "브랜치 이름($BRANCH_NAME)이 티켓 번호 형식이 아닙니다. 제목을 변경하지 않습니다."
+          fi
