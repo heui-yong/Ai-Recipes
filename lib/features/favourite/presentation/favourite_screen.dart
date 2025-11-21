@@ -6,7 +6,9 @@ class FavouriteScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Text("FavouriteScreen"),
+      body: SafeArea(
+          child: Text("FavouriteScreen")
+      ),
     );
   }
 }

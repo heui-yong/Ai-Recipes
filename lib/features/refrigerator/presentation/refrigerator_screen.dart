@@ -6,7 +6,9 @@ class RefrigeratorScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Text("RefrigeratorScreen"),
+      body: SafeArea(
+          child: Text("RefrigeratorScreen")
+      ),
     );
   }
 }
