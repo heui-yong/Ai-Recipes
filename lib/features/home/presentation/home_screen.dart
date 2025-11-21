@@ -1,47 +1,69 @@
+import 'package:ai_recipes/core/core.dart';
+import 'package:ai_recipes/features/home/data/data.dart';
+import 'package:ai_recipes/features/home/presentation/widgets/home_screen_move_btn.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
-class HomeScreen extends StatefulWidget {
+class HomeScreen extends ConsumerStatefulWidget {
   const HomeScreen({super.key});
 
   @override
-  State<HomeScreen> createState() => _HomeScreenState();
+  ConsumerState<HomeScreen> createState() => _HomeScreenState();
 }
 
-class _HomeScreenState extends State<HomeScreen> {
+class _HomeScreenState extends ConsumerState<HomeScreen> {
+  final List<HomeMenuModel> _homeMenuList = [
+    const HomeMenuModel(
+        title: AppStrings.homeMenuTitle_1,
+        linearGradient: AppColorLinearGradients.linear_ff8594_fedeae,
+        imagePath: AppAssets.logoTextN,
+        route: AppStrings.createRecipePath
+    ),
+    const HomeMenuModel(
+        title: AppStrings.homeMenuTitle_2,
+        linearGradient: AppColorLinearGradients.linear_dbb3f9_d3e7ff,
+        imagePath: AppAssets.favourites,
+        route: AppStrings.favouritePath
+    ),
+    const HomeMenuModel(
+        title: AppStrings.homeMenuTitle_3,
+        linearGradient: AppColorLinearGradients.linear_a9a9a9_dedede,
+        imagePath: AppAssets.refrigerator,
+        route: AppStrings.refrigeratorPath
+    ),
+  ];
+
+  @override
+  void initState() {
+    super.initState();
+  }
+
+  _moveScreen(String route) {
+    context.push(route);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: SafeArea(
-          child: Column(
-            children: [
-              Text("HomeScreen"),
-              // 첫 번째 버튼
-              ElevatedButton(
-                onPressed: () {
-                  context.push('/create-recipe');
-                },
-                child: const Text("레시피 생성"),
-              ),
-              const SizedBox(height: 10), // 버튼 사이 간격
-
-              // 두 번째 버튼
-              ElevatedButton(
-                onPressed: () {
-                  context.push('/favourite');
-                },
-                child: const Text("즐겨찾기"),
-              ),
-              const SizedBox(height: 10), // 버튼 사이 간격
-
-              // 세 번째 버튼
-              ElevatedButton(
-                onPressed: () {
-                  context.push('/refrigerator');
-                },
-                child: const Text("나의 냉장고"),
-              ),
-            ],
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 51),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                ..._homeMenuList.map((item) => Padding(
+                  padding: const EdgeInsets.only(bottom: 50),
+                  child: HomeScreenMoveBtn(
+                    title: item.title,
+                    linearGradient: item.linearGradient,
+                    imagePath: item.imagePath,
+                    onMove: () => _moveScreen(item.route),
+                  ),
+                ))
+              ],
+            ),
           )
       ),
     );
